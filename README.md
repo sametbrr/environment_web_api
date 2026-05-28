@@ -145,14 +145,14 @@ Visual Studio'da publish profillerini (`.pubxml`) kullan. Her profil `<Environme
 
 ## 🧪 Örnek uygulama
 
-[samples/EnvironmentWebApi](samples/EnvironmentWebApi) paketin **tam çalışan canlı kullanım örneğidir**. Paketi `ProjectReference` ile tüketir ([Program.cs](samples/EnvironmentWebApi/Program.cs) tek satır), ortam `appsettings` dosyaları, publish profilleri ve `launchSettings.json` ile birlikte gelir.
+[samples/EnvironmentConfiguratorApi](samples/EnvironmentConfiguratorApi) paketin **tam çalışan canlı kullanım örneğidir**. Paketi `ProjectReference` ile tüketir ([Program.cs](samples/EnvironmentConfiguratorApi/Program.cs) tek satır), ortam `appsettings` dosyaları, publish profilleri ve `launchSettings.json` ile birlikte gelir.
 
-`/test/environment-name` endpoint'i aktif ortam adını döndürür ([TestController.cs](samples/EnvironmentWebApi/Controllers/TestController.cs)).
+`/test/environment-name` endpoint'i aktif ortam adını döndürür ([TestController.cs](samples/EnvironmentConfiguratorApi/Controllers/TestController.cs)).
 
 Çalıştır:
 
 ```bash
-cd samples/EnvironmentWebApi
+cd samples/EnvironmentConfiguratorApi
 ASPNETCORE_ENVIRONMENT=Beta dotnet run
 # başka terminalde:
 curl http://localhost:5000/test/environment-name   # -> "Beta"
@@ -165,7 +165,7 @@ curl http://localhost:5000/test/environment-name   # -> "Beta"
 ```
 EnvironmentConfigurator.sln
 ├── src/EnvironmentConfigurator/           → NuGet paketi (kod + scaffold target + şablonlar)
-├── samples/EnvironmentWebApi/             → paketi kullanan örnek API
+├── samples/EnvironmentConfiguratorApi/             → paketi kullanan örnek API
 └── tests/EnvironmentConfigurator.Tests/   → xUnit testleri
 ```
 
