@@ -11,15 +11,15 @@
 
   <PropertyGroup>
     <PackageId>EnvironmentConfigurator</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>sametbrr</Authors>
     <Description>Environment-aware configuration for ASP.NET Core. Adds appsettings.{Environment}.json loading via a single builder call and auto-scaffolds publish profiles, web.config and per-environment appsettings into the consuming project on first build.</Description>
     <PackageTags>aspnetcore;configuration;environment;appsettings;webdeploy;publish</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/sametbrr/environment_web_api</RepositoryUrl>
+    <RepositoryUrl>https://github.com/sametbrr/EnvironmentConfigurator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/sametbrr/environment_web_api</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/sametbrr/EnvironmentConfigurator</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
