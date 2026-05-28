@@ -3,17 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfigurator", "EnvironmentConfigurator\EnvironmentConfigurator.csproj", "{849C5EDB-6127-40D0-974A-27E842A00799}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfigurator", "src\EnvironmentConfigurator\EnvironmentConfigurator.csproj", "{849C5EDB-6127-40D0-974A-27E842A00799}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfigurator.Tests", "EnvironmentConfigurator.Tests\EnvironmentConfigurator.Tests.csproj", "{1CC7AB3B-87FD-484F-B1B4-2FFCF76076FF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfigurator.Tests", "tests\EnvironmentConfigurator.Tests\EnvironmentConfigurator.Tests.csproj", "{1CC7AB3B-87FD-484F-B1B4-2FFCF76076FF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5D20AA90-6969-D8BD-9DCD-8634F4692FDA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfiguratorApi", "samples\EnvironmentConfiguratorApi\EnvironmentConfiguratorApi.csproj", "{E54342FD-25FB-4C68-AD89-D4D590D31942}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentConfiguratorApi", "EnvironmentConfiguratorApi\EnvironmentConfiguratorApi.csproj", "{E54342FD-25FB-4C68-AD89-D4D590D31942}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,10 +58,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{849C5EDB-6127-40D0-974A-27E842A00799} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{1CC7AB3B-87FD-484F-B1B4-2FFCF76076FF} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
-		{E54342FD-25FB-4C68-AD89-D4D590D31942} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 	EndGlobalSection
 EndGlobal

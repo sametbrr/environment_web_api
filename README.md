@@ -176,14 +176,14 @@ Properties/PublishProfiles/Production-FolderProfile.pubxml
 
 ## 🧪 Sample application | Örnek uygulama
 
-**EN:** [samples/EnvironmentConfiguratorApi](samples/EnvironmentConfiguratorApi) is a **fully working live example** of the package. It consumes the package via `ProjectReference` (a single line in [Program.cs](samples/EnvironmentConfiguratorApi/Program.cs)) and ships with per-environment `appsettings` files, publish profiles and `launchSettings.json`. The `/test/environment-name` endpoint returns the active environment name ([TestController.cs](samples/EnvironmentConfiguratorApi/Controllers/TestController.cs)).
+**EN:** [EnvironmentConfiguratorApi](EnvironmentConfiguratorApi) is a **fully working live example** of the package. It consumes the package via `ProjectReference` (a single line in [Program.cs](EnvironmentConfiguratorApi/Program.cs)) and ships with per-environment `appsettings` files, publish profiles and `launchSettings.json`. The `/test/environment-name` endpoint returns the active environment name ([TestController.cs](EnvironmentConfiguratorApi/Controllers/TestController.cs)).
 
-**TR:** [samples/EnvironmentConfiguratorApi](samples/EnvironmentConfiguratorApi), paketin **tam çalışan canlı bir örneğidir**. Paketi `ProjectReference` ile kullanır ([Program.cs](samples/EnvironmentConfiguratorApi/Program.cs) içinde tek satır) ve ortam bazlı `appsettings` dosyaları, publish profilleri ve `launchSettings.json` ile gelir. `/test/environment-name` endpoint'i aktif ortam adını döner ([TestController.cs](samples/EnvironmentConfiguratorApi/Controllers/TestController.cs)).
+**TR:** [EnvironmentConfiguratorApi](EnvironmentConfiguratorApi), paketin **tam çalışan canlı bir örneğidir**. Paketi `ProjectReference` ile kullanır ([Program.cs](EnvironmentConfiguratorApi/Program.cs) içinde tek satır) ve ortam bazlı `appsettings` dosyaları, publish profilleri ve `launchSettings.json` ile gelir. `/test/environment-name` endpoint'i aktif ortam adını döner ([TestController.cs](EnvironmentConfiguratorApi/Controllers/TestController.cs)).
 
 **EN:** Run it: | **TR:** Çalıştırın:
 
 ```bash
-cd samples/EnvironmentConfiguratorApi
+cd EnvironmentConfiguratorApi
 ASPNETCORE_ENVIRONMENT=Beta dotnet run
 # in another terminal | başka bir terminalde:
 curl http://localhost:5000/test/environment-name   # -> "Beta"
@@ -195,9 +195,9 @@ curl http://localhost:5000/test/environment-name   # -> "Beta"
 
 ```
 EnvironmentConfigurator.sln
-├── src/EnvironmentConfigurator/           → NuGet package (code + scaffold target + templates)
-├── samples/EnvironmentConfiguratorApi/    → sample API consuming the package
-└── tests/EnvironmentConfigurator.Tests/   → xUnit tests
+├── EnvironmentConfigurator/           → NuGet package (code + scaffold target + templates)
+├── EnvironmentConfiguratorApi/        → sample API consuming the package
+└── EnvironmentConfigurator.Tests/     → xUnit tests
 ```
 
 ---
@@ -205,7 +205,7 @@ EnvironmentConfigurator.sln
 ## 📦 Building the package locally | Paketi yerelde derleme
 
 ```bash
-dotnet pack src/EnvironmentConfigurator -c Release -o ./artifacts
+dotnet pack EnvironmentConfigurator -c Release -o ./artifacts
 # -> artifacts/EnvironmentConfigurator.1.0.3.nupkg
 ```
 
