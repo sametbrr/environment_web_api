@@ -1,5 +1,8 @@
 # EnvironmentConfigurator
 
+[![NuGet](https://img.shields.io/nuget/v/EnvironmentConfigurator.svg)](https://www.nuget.org/packages/EnvironmentConfigurator)
+[![Downloads](https://img.shields.io/nuget/dt/EnvironmentConfigurator.svg)](https://www.nuget.org/packages/EnvironmentConfigurator)
+
 Environment-aware configuration for ASP.NET Core (.NET 8+).
 
 - Loads `appsettings.json` → `appsettings.{Environment}.json` → environment variables with a single call.
