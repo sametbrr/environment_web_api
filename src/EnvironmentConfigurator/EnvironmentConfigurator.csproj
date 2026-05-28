@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>EnvironmentConfigurator</RootNamespace>
+    <AssemblyName>EnvironmentConfigurator</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>EnvironmentConfigurator</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>sametbrr</Authors>
+    <Description>Environment-aware configuration for ASP.NET Core. Adds appsettings.{Environment}.json loading via a single builder call and auto-scaffolds publish profiles, web.config and per-environment appsettings into the consuming project on first build.</Description>
+    <PackageTags>aspnetcore;configuration;environment;appsettings;webdeploy;publish</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/sametbrr/Environment-WebApi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/sametbrr/Environment-WebApi</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Package payload: build target + scaffold templates -->
+  <ItemGroup>
+    <None Include="build/EnvironmentConfigurator.targets" Pack="true" PackagePath="build/" />
+    <None Include="templates/**/*" Pack="true" PackagePath="templates/" />
+    <None Include="PACKAGE_README.md" Pack="true" PackagePath="README.md" />
+  </ItemGroup>
+
+</Project>

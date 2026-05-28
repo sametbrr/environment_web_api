@@ -1,0 +1,29 @@
+<Project>
+
+  <!--
+    Scaffolds environment-specific configuration files into the consuming project on first build.
+    Only files that do NOT already exist are copied, so user edits are never overwritten.
+    Disable by setting <EnvironmentConfiguratorScaffold>false</EnvironmentConfiguratorScaffold> in the project.
+  -->
+  <Target Name="ScaffoldEnvironmentConfigurator"
+          BeforeTargets="BeforeBuild"
+          Condition="'$(EnvironmentConfiguratorScaffold)' != 'false'">
+
+    <ItemGroup>
+      <_EnvCfgTemplate Include="$(MSBuildThisFileDirectory)..\templates\**\*" />
+      <_EnvCfgToCopy Include="@(_EnvCfgTemplate)"
+                     Condition="!Exists('$(MSBuildProjectDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_EnvCfgToCopy)"
+          DestinationFiles="@(_EnvCfgToCopy->'$(MSBuildProjectDirectory)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(_EnvCfgToCopy)' != ''" />
+
+    <Message Importance="high"
+             Text="EnvironmentConfigurator: scaffolded %(_EnvCfgToCopy.RecursiveDir)%(_EnvCfgToCopy.Filename)%(_EnvCfgToCopy.Extension)"
+             Condition="'@(_EnvCfgToCopy)' != ''" />
+
+  </Target>
+
+</Project>

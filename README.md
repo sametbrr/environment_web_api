@@ -1,98 +1,122 @@
-# Environment-WebApi
+# EnvironmentConfigurator
 
-> This project is an example of an API used to publish and debug a project via Web Deploy in Visual Studio, based on the environment JSON file.
+> ASP.NET Core (.NET 8+) için environment-aware (ortama duyarlı) konfigürasyon paketi.
+> Tek satır kodla `appsettings.{Environment}.json` yüklemesi yapar **ve** ilk build'de publish profillerini, `web.config` ve ortam `appsettings` dosyalarını projeye otomatik oluşturur.
 
 ---
 
-## 🚀 Getting Started
+## 📦 Bu paket ne yapar?
 
-// Program çalıştırılırken, environment ayarına göre appsettings konfigürasyon dosyaları yüklenir.
-// When the application runs, the appsettings configuration files are loaded based on the environment setting.
+- ✅ `appsettings.json` → `appsettings.{Environment}.json` → environment variables sırasıyla yüklenir, tek satır.
+- ✅ Pakete eklenince ilk `dotnet build`'de eksik konfigürasyon dosyalarını projeye **otomatik kopyalar** (var olanı asla ezmez).
+- ✅ Mevcut projelere `dotnet add package` ile saniyeler içinde entegre olur.
+- ✅ Hedef: **.NET 8 ve sonrası** (net9 / net10 dahil).
 
-### Program.cs
+---
+
+## 🚀 Kurulum
+
+```bash
+dotnet add package EnvironmentConfigurator
+```
+
+> Şu an paket yalnızca lokal `.nupkg` olarak üretiliyor. Lokal paketi kullanmak için (yayınlanmadıysa) `.nupkg`'in bulunduğu klasörü kaynak olarak ekle:
+> ```bash
+> dotnet add package EnvironmentConfigurator --source ./artifacts
+> ```
+
+---
+
+## ⚡ Kullanım
+
+### Tek satır (önerilen)
 
 ```csharp
-var environment = builder.Environment.EnvironmentName;
+using EnvironmentConfigurator;
 
-builder.Configuration
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
-````
+var builder = WebApplication.CreateBuilder(args);
+
+builder.AddEnvironmentConfiguration();   // appsettings.{Environment}.json + env variables
+
+var app = builder.Build();
+app.Run();
+```
+
+`AddEnvironmentConfiguration`, .NET 8'deki `IHostApplicationBuilder` üzerinde çalışır; `WebApplicationBuilder` ile doğrudan kullanılır.
+
+### Esnek varyant
+
+Builder'a erişimin yoksa veya `IConfigurationBuilder` seviyesinde çalışıyorsan:
+
+```csharp
+builder.Configuration.AddEnvironmentJsonFiles(builder.Environment);
+```
+
+### Seçenekler (`EnvironmentConfiguratorOptions`)
+
+```csharp
+builder.AddEnvironmentConfiguration(options =>
+{
+    options.BaseSettingsOptional        = false;  // appsettings.json yoksa hata fırlatma (varsayılan: false)
+    options.ReloadOnChange              = true;   // dosya değişince yeniden yükle (varsayılan: true)
+    options.IncludeEnvironmentVariables = true;   // env variables kaynağını ekle (varsayılan: true)
+    options.BasePath                    = "config"; // JSON dosyaları farklı klasördeyse (varsayılan: çalışma dizini)
+});
+```
 
 ---
 
-## 🧩 Environment JSON Files
+## 🛠️ Otomatik scaffold (dosya oluşturma)
 
-* appsettings.json
-* appsettings.Development.json
-* appsettings.Beta.json
-* appsettings.Production.json
+Paketi kurup **ilk kez build** ettiğinde, projede **bulunmayan** şu dosyalar otomatik oluşturulur:
+
+```
+appsettings.Beta.json
+appsettings.Production.json
+web.config
+Properties/PublishProfiles/Beta-FolderProfile.pubxml
+Properties/PublishProfiles/Development-FolderProfile.pubxml
+Properties/PublishProfiles/Production-FolderProfile.pubxml
+```
+
+- **Var olan dosyalar asla ezilmez** — sadece eksik olanlar eklenir, düzenlemelerin korunur.
+- Oluşturulan dosyalar build çıktısında loglanır: `EnvironmentConfigurator: scaffolded ...`
+- `.pubxml` şablonlarında projeye-özel `ProjectGuid` **yoktur** (folder publish için gerekmez, çakışmayı önler) — `EnvironmentName` her dosyada hazırdır.
+
+### Scaffold'u kapatma
+
+İstemiyorsan `.csproj` içine ekle:
+
+```xml
+<PropertyGroup>
+  <EnvironmentConfiguratorScaffold>false</EnvironmentConfiguratorScaffold>
+</PropertyGroup>
+```
 
 ---
 
-## 📤 Launch Settings Configuration for Debugging
+## 🌍 Ortam (Environment) seçimi
 
-**launchSettings.json:**
+Hangi `appsettings.{X}.json`'ın yükleneceğini `ASPNETCORE_ENVIRONMENT` değişkeni belirler.
+
+| Senaryo | Nerede ayarlanır |
+|---|---|
+| Debug / lokal | `Properties/launchSettings.json` → profil `environmentVariables` |
+| Komut satırı | `ASPNETCORE_ENVIRONMENT=Beta dotnet run` |
+| IIS / Web Deploy | `web.config` → `<environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Production" />` |
+
+**Override mantığı:** `appsettings.json` ortak ayarları taşır; `appsettings.{Environment}.json` yalnızca o ortamda değişen anahtarları ezer.
+
+`launchSettings.json` örneği:
 
 ```json
 {
-  "$schema": "http://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:31758",
-      "sslPort": 44310
-    }
-  },
   "profiles": {
-    "Development": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        // Debug sırasında, profil ayarına bağlı olarak environment belirlenir.
-        // During debugging, the environment is determined according to the selected profile.
-
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "Beta": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        // Debug sırasında, profil ayarına bağlı olarak environment belirlenir.
-        // During debugging, the environment is determined according to the selected profile.
-
-        "ASPNETCORE_ENVIRONMENT": "Beta"
-      }
-    },
-    "Production": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        // Debug sırasında, profil ayarına bağlı olarak environment belirlenir.
-        // During debugging, the environment is determined according to the selected profile.
-
-        "ASPNETCORE_ENVIRONMENT": "Production"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "environmentVariables": { "ASPNETCORE_ENVIRONMENT": "Beta" }
     }
   }
 }
@@ -100,34 +124,18 @@ builder.Configuration
 
 ---
 
-## 📤 Publish Profiles
+## 📤 Publish / Web Deploy
 
-Use Web Deploy with publish profiles:
-
-* Beta-FolderProfile.pubxml
-* Development-FolderProfile.pubxml
-* Production-FolderProfile.pubxml
-
-Example `.pubxml` file:
+Visual Studio'da publish profillerini (`.pubxml`) kullan. Her profil `<EnvironmentName>` ile ortamını belirtir; yayın sırasında doğru konfigürasyon seçilir.
 
 ```xml
 <Project>
   <PropertyGroup>
-		<!-- Deployment sırasında ise environment ayarına göre projenin konfigürasyon dosyaları seçilir. --> 
-		<!-- During deployment, the configuration files for the project are selected based on the environment setting.-->
-    <EnvironmentName>Beta</EnvironmentName> <!-- Possible values: Production, Development, Stage -->
-    <DeleteExistingFiles>true</DeleteExistingFiles>
-    <ExcludeApp_Data>false</ExcludeApp_Data>
-    <LaunchSiteAfterPublish>true</LaunchSiteAfterPublish>
-    <LastUsedBuildConfiguration>Release</LastUsedBuildConfiguration>
-    <LastUsedPlatform>Any CPU</LastUsedPlatform>
+    <EnvironmentName>Beta</EnvironmentName>
     <PublishProvider>FileSystem</PublishProvider>
     <PublishUrl>bin\Release\net8.0\publish\</PublishUrl>
     <WebPublishMethod>FileSystem</WebPublishMethod>
-    <_TargetId>Folder</_TargetId>
-    <SiteUrlToLaunchAfterPublish />
     <TargetFramework>net8.0</TargetFramework>
-    <ProjectGuid>b145306a-0951-443c-b259-60425ce82c01</ProjectGuid>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
 </Project>
@@ -135,41 +143,43 @@ Example `.pubxml` file:
 
 ---
 
-## ⚙️ Web Config
+## 🧪 Örnek uygulama
 
-**web.config**
+[samples/EnvironmentWebApi](samples/EnvironmentWebApi) paketin **tam çalışan canlı kullanım örneğidir**. Paketi `ProjectReference` ile tüketir ([Program.cs](samples/EnvironmentWebApi/Program.cs) tek satır), ortam `appsettings` dosyaları, publish profilleri ve `launchSettings.json` ile birlikte gelir.
 
-```xml
-<configuration>
-  <location path="." inheritInChildApplications="false">
-    <system.webServer>
-      <handlers>
-        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
-      </handlers>
-      <aspNetCore processPath="dotnet" arguments=".\EnvironmentWebApi.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
-        <environmentVariables>
-          <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Production" /> <!-- Possible values: Beta, Development, Stage -->
-        </environmentVariables>
-      </aspNetCore>
-    </system.webServer>
-  </location>
-</configuration>
+`/test/environment-name` endpoint'i aktif ortam adını döndürür ([TestController.cs](samples/EnvironmentWebApi/Controllers/TestController.cs)).
+
+Çalıştır:
+
+```bash
+cd samples/EnvironmentWebApi
+ASPNETCORE_ENVIRONMENT=Beta dotnet run
+# başka terminalde:
+curl http://localhost:5000/test/environment-name   # -> "Beta"
 ```
 
 ---
 
-## 📦 Features
+## 🏗️ Proje yapısı
 
-✅ One-click environment variable debugging
-
-✅ One-click environment-specific publishing
-
-✅ Easy to use
+```
+Environment-WebApi.sln
+├── src/EnvironmentConfigurator/           → NuGet paketi (kod + scaffold target + şablonlar)
+├── samples/EnvironmentWebApi/             → paketi kullanan örnek API
+└── tests/EnvironmentConfigurator.Tests/   → xUnit testleri
+```
 
 ---
 
-## 📁 License
+## 📦 Paketi lokal üretme
 
-Licensed under the MIT License.
-
+```bash
+dotnet pack src/EnvironmentConfigurator -c Release -o ./artifacts
+# -> artifacts/EnvironmentConfigurator.1.0.0.nupkg
 ```
+
+---
+
+## 📁 Lisans
+
+MIT — bkz. [LICENSE.txt](LICENSE.txt).
