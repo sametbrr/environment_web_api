@@ -163,7 +163,7 @@ curl http://localhost:5000/test/environment-name   # -> "Beta"
 ## 🏗️ Proje yapısı
 
 ```
-Environment-WebApi.sln
+EnvironmentConfigurator.sln
 ├── src/EnvironmentConfigurator/           → NuGet paketi (kod + scaffold target + şablonlar)
 ├── samples/EnvironmentWebApi/             → paketi kullanan örnek API
 └── tests/EnvironmentConfigurator.Tests/   → xUnit testleri

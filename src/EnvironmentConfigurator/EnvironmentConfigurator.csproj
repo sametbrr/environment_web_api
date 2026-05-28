@@ -17,9 +17,9 @@
     <PackageTags>aspnetcore;configuration;environment;appsettings;webdeploy;publish</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/sametbrr/Environment-WebApi</RepositoryUrl>
+    <RepositoryUrl>https://github.com/sametbrr/environment_web_api</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/sametbrr/Environment-WebApi</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/sametbrr/environment_web_api</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
