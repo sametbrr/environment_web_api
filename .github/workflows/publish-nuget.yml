@@ -1,0 +1,84 @@
+name: Publish NuGet on Version Bump
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - src/EnvironmentConfigurator/EnvironmentConfigurator.csproj
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Read version from csproj
+        id: version
+        run: |
+          RAW=$(grep -m1 '<Version>' src/EnvironmentConfigurator/EnvironmentConfigurator.csproj \
+            | sed -E 's/.*<Version>([^<]+)<\/Version>.*/\1/')
+          echo "version=${RAW}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${RAW}" >> "$GITHUB_OUTPUT"
+          echo "Detected version: v${RAW}"
+
+      - name: Check if tag already exists
+        id: tag_check
+        run: |
+          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run tests
+        if: steps.tag_check.outputs.exists == 'false'
+        run: dotnet test EnvironmentConfigurator.sln -c Release
+
+      - name: Pack
+        if: steps.tag_check.outputs.exists == 'false'
+        run: dotnet pack src/EnvironmentConfigurator -c Release -o ./artifacts
+
+      - name: Push to NuGet
+        if: steps.tag_check.outputs.exists == 'false'
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --api-key "${{ secrets.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Generate release notes from git log
+        if: steps.tag_check.outputs.exists == 'false'
+        id: notes
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            LOG=$(git log --oneline | head -20)
+          else
+            LOG=$(git log "${PREV_TAG}..HEAD" --oneline)
+          fi
+          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$LOG" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag and release
+        if: steps.tag_check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "EnvironmentConfigurator $TAG" \
+            --notes "${{ steps.notes.outputs.notes }}" \
+            ./artifacts/*.nupkg
